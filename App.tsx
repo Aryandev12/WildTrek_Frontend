@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from './src/components/Home';
 import AlertScreen from './src/components/Alert';
-import ProfileStack from './src/stack/ProfileStack'; // Import the ProfileStack
+import ProfileStack from './src/stack/ProfileStack'; 
 import { createStackNavigator } from '@react-navigation/stack';
 import Bird from './src/components/Bird';
 import Alert from './src/components/Alert';
@@ -22,7 +22,10 @@ export type RootStackParamList = {
   Home: undefined;
   Bird: undefined;
   Animal: undefined;
-  Plant: undefined;
+  Result: undefined;
+  Alert: undefined;
+  AlertHistory: undefined;
+  BirdAlert: undefined
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
