@@ -4,24 +4,24 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../App';
 
-type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
+type AlertScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Alert'>;
 
-const Home: React.FC = () => {
-  const navigation = useNavigation<HomeScreenNavigationProp>();
+const Alert: React.FC = () => {
+  const navigation = useNavigation<AlertScreenNavigationProp>();
 
   return (
     <View style={styles.container}>
       {/* Heading for the app */}
-      <Text style={styles.heading}>WildTrek</Text>
+      <Text style={styles.heading}>Alert</Text>
 
       {/* Cards for Bird, Animal, Plant */}
       <View style={styles.cardsContainer}>
-        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Bird')}>
+        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('BirdAlert')}>
           <Image source={{ uri: 'https://t3.ftcdn.net/jpg/07/44/00/82/240_F_744008275_AHvOgcDuOj3JxyFYBDZNe2MHbG8qvJpV.jpg' }} style={styles.image} />
           <Text style={styles.text}>BIRD</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Animal')}>
+        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('AnimalAlert')}>
           <Image source={{ uri: 'https://t3.ftcdn.net/jpg/03/02/14/00/240_F_302140095_ZNvUZwG6IofM1vt5VPC758sCFsT2BVYb.jpg' }} style={styles.image} />
           <Text style={styles.text}>ANIMAL</Text>
         </TouchableOpacity>
@@ -77,4 +77,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default Alert;

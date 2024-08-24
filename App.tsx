@@ -6,13 +6,14 @@ import AlertScreen from './src/components/Alert';
 import ProfileStack from './src/stack/ProfileStack'; // Import the ProfileStack
 import { createStackNavigator } from '@react-navigation/stack';
 import Bird from './src/components/Bird';
+import Alert from './src/components/Alert';
+import BirdAlert from './src/components/BirdAlert';
+import AnimalAlert from './src/components/AnimalAlert';
 import Result from './src/components/Result';
 import Animal from './src/components/Animal';
-import Plant from './src/components/Plant';
 import { UserProvider, useUser } from './src/contexts/UserContext'; // Import UserProvider
-import MapScreen from './src/components/MapScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import BirdAlert from './src/components/BirdAlert';
+
 
 const Tab = createBottomTabNavigator();
 export type RootStackParamList = {
@@ -41,8 +42,9 @@ const MainStack = () => {
       <Stack.Screen name="Bird" component={Bird} />
       <Stack.Screen name="Result" component={Result} />
       <Stack.Screen name="Animal" component={Animal} />
-      <Stack.Screen name="Plant" component={Plant} />
+      <Stack.Screen name="Alert" component={Alert} />
       <Stack.Screen name="BirdAlert" component={BirdAlert} />
+      <Stack.Screen name="AnimalAlert" component={AnimalAlert} />
     </Stack.Navigator>
   );
 };
@@ -115,20 +117,6 @@ const MainApp: React.FC = () => {
           options={{
             tabBarLabel: 'Profile',
             headerShown: false, // Hide header because the stack will manage it
-          }}
-        />
-        <Tab.Screen
-          name="Map"
-          component={MapScreen}
-          options={{
-            tabBarLabel: 'Map',
-            headerStyle: {
-              backgroundColor: '#3f89b8',
-            },
-            headerTintColor: '#000000',
-            headerTitleStyle: {
-              fontWeight: 'bold',
-            },
           }}
         />
       </Tab.Navigator>
