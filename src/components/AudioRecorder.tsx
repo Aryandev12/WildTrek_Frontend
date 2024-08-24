@@ -162,8 +162,8 @@ const styles = StyleSheet.create({
     color: '#000000'
   },
   container: {
-    flexDirection: 'row',  // Aligns children in a row
-    justifyContent: 'space-between', // Space between the children (optional)
+    flexDirection: 'row',  
+    justifyContent: 'space-between', 
     padding: 10,
   },
   button: {

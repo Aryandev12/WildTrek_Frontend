@@ -5,15 +5,15 @@ import AudioRecorder from './AudioRecorder';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from './types'; // Adjust import based on your project structure
+import { RootStackParamList } from './types'; 
 
-// Define the navigation prop type
+// Navigation prop type
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'BirdAlert'>;
 
 const BirdAlert: React.FC = () => {
   const [imageUri, setImageUri] = useState<string | null>(null);
-  const [classificationResult, setClassificationResult] = useState<any>(null); // Adjust type as needed
-  const navigation = useNavigation<NavigationProp>(); // Use navigation
+  const [classificationResult, setClassificationResult] = useState<any>(null); 
+  const navigation = useNavigation<NavigationProp>(); 
 
   async function sendImageToServer(imageUri: string): Promise<void> {
     const formData = new FormData();
@@ -39,7 +39,7 @@ const BirdAlert: React.FC = () => {
         };
         setClassificationResult(resultData);
 
-        // Navigate to Result page with parameters
+        // Navigating to Result page with parameters
         navigation.navigate('Result', { imageUri, classificationResult: resultData });
       }
     } catch (error) {

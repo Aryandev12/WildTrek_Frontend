@@ -11,7 +11,6 @@ const Signup: React.FC<{ navigation: any }> = ({ navigation }) => {
 
 
   const handleSignup = async () => {
-    // Replace with actual signup logic
     
     
     if (name && email && password) {

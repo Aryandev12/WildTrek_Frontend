@@ -4,10 +4,18 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../App';
 
-type AlertScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Alert'>;
+type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
 const Alert: React.FC = () => {
-  const navigation = useNavigation<AlertScreenNavigationProp>();
+  const navigation = useNavigation<HomeScreenNavigationProp>();
+
+  const handleAlertHistoryPress = () => {
+    if (true) {
+      navigation.navigate('AlertHistory'); // Navigate to Alert History if logged in
+    } else {
+      navigation.navigate('Profile'); // Redirect to Login if not logged in
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -25,6 +33,12 @@ const Alert: React.FC = () => {
           <Image source={{ uri: 'https://t3.ftcdn.net/jpg/03/02/14/00/240_F_302140095_ZNvUZwG6IofM1vt5VPC758sCFsT2BVYb.jpg' }} style={styles.image} />
           <Text style={styles.text}>ANIMAL</Text>
         </TouchableOpacity>
+
+        {/* Button for Alert History */}
+      <TouchableOpacity style={styles.historyButton} onPress={handleAlertHistoryPress}>
+        <Text style={styles.historyButtonText}>View Alert History</Text>
+      </TouchableOpacity>
+
       </View>
     </View>
   );
@@ -74,6 +88,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#2c3e50',
+  },
+  historyButton: {
+    width: '80%',
+    backgroundColor: '#34495e',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 20,
+    elevation: 5,
+  },
+  historyButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#ffffff',
   },
 });
 

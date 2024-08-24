@@ -16,23 +16,21 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
         console.log(email, password);
         const response = await axios.post('http://10.0.2.2:5000/login', { email, password });
         
-        // Handle the response (e.g., navigate to another screen, save user data, etc.)
+        // Handling the response
         console.log(response.data);
         const userData = {
           username: response.data.username,
           email: response.data.email,
           accesstoken: response.data.accesstoken
         }
-        // If your server sends a token or user data, you can handle it here
-        // Example: login(response.data.user); // Assuming you store the user data in context
+        t
 
         await AsyncStorage.setItem('userData', JSON.stringify(userData));
 
         login(response.data);
         navigation.navigate('Profile');
   
-        // Navigate to another screen after successful login
-         // Navigate to the Profile screen or another appropriate screen
+        
   
       } catch (error) {
         console.error('Error during login:', error);

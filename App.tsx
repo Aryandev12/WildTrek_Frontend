@@ -7,11 +7,13 @@ import ProfileStack from './src/stack/ProfileStack'; // Import the ProfileStack
 import { createStackNavigator } from '@react-navigation/stack';
 import Bird from './src/components/Bird';
 import Alert from './src/components/Alert';
+import AlertHistory from './src/components/AlertHistory';
 import BirdAlert from './src/components/BirdAlert';
 import AnimalAlert from './src/components/AnimalAlert';
 import Result from './src/components/Result';
 import Animal from './src/components/Animal';
-import { UserProvider, useUser } from './src/contexts/UserContext'; // Import UserProvider
+import Profile from './src/components/Profile';
+import { UserProvider, useUser } from './src/contexts/UserContext'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -43,8 +45,10 @@ const MainStack = () => {
       <Stack.Screen name="Result" component={Result} />
       <Stack.Screen name="Animal" component={Animal} />
       <Stack.Screen name="Alert" component={Alert} />
+      <Stack.Screen name="AlertHistory" component={AlertHistory} />
       <Stack.Screen name="BirdAlert" component={BirdAlert} />
       <Stack.Screen name="AnimalAlert" component={AnimalAlert} />
+      <Stack.Screen name="Profile" component={Profile} />
     </Stack.Navigator>
   );
 };
@@ -86,7 +90,7 @@ const MainApp: React.FC = () => {
           },
           tabBarActiveTintColor: '#fff',
           tabBarInactiveTintColor: '#000000',
-          tabBarIcon: () => null, // Remove icons if not needed
+          tabBarIcon: () => null, 
           tabBarLabelStyle: {
             fontWeight: 'bold',
             fontSize: 18,
@@ -113,10 +117,10 @@ const MainApp: React.FC = () => {
         />
         <Tab.Screen
           name="ProfileStack"
-          component={ProfileStack} // Use ProfileStack instead of just ProfileScreen
+          component={ProfileStack} 
           options={{
             tabBarLabel: 'Profile',
-            headerShown: false, // Hide header because the stack will manage it
+            headerShown: false,
           }}
         />
       </Tab.Navigator>

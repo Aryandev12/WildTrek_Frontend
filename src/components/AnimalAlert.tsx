@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types'; // Adjust import based on your project structure
 
-// Define the navigation prop type
+// Navigation prop type
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'AnimalAlert'>;
 
 const AnimalAlert: React.FC = () => {
@@ -39,7 +39,7 @@ const AnimalAlert: React.FC = () => {
         };
         setClassificationResult(resultData);
 
-        // Navigate to Result page with parameters
+        // Navigating to Result page with parameters
         navigation.navigate('Result', { imageUri, classificationResult: resultData });
       }
     } catch (error) {
