@@ -10,16 +10,16 @@ const Result = ({ route }) => {
   return (
     <View style={styles.container}>
       <Image source={{ uri: displayImageUri }} style={styles.image} />
-      <View style={styles.resultContainer}>
-        <Text style={styles.resultText}>Scientific Name: {classificationResult.scientific_name}</Text>
-        <Text style={styles.resultText}>Common Name: {classificationResult.common_name}</Text>
-        <Text style={styles.resultText}>Description: {classificationResult.description}</Text>
-        <Text style={styles.resultText}>Habitat: {classificationResult.habitat}</Text>
-        <Text style={styles.resultText}>Endangered: {classificationResult.endangered}</Text>
-        <Text style={styles.resultText}>Dangerous: {classificationResult.dangerous}</Text>
-        <Text style={styles.resultText}>Poisonous: {classificationResult.poisonous}</Text>
-        <Text style={styles.resultText}>Venomous: {classificationResult.venomous}</Text>
-        <Text style={styles.resultText}>Probability: {classificationResult.probability}%</Text>
+      <View style={styles.card}>
+        <Text style={styles.resultText}><Text style={styles.label}>Scientific Name:</Text> {classificationResult.scientific_name}</Text>
+        <Text style={styles.resultText}><Text style={styles.label}>Common Name:</Text> {classificationResult.common_name}</Text>
+        <Text style={styles.resultText}><Text style={styles.label}>Description:</Text> {classificationResult.description}</Text>
+        <Text style={styles.resultText}><Text style={styles.label}>Habitat:</Text> {classificationResult.habitat}</Text>
+        <Text style={styles.resultText}><Text style={styles.label}>Endangered:</Text> {classificationResult.endangered}</Text>
+        <Text style={styles.resultText}><Text style={styles.label}>Dangerous:</Text> {classificationResult.dangerous}</Text>
+        <Text style={styles.resultText}><Text style={styles.label}>Poisonous:</Text> {classificationResult.poisonous}</Text>
+        <Text style={styles.resultText}><Text style={styles.label}>Venomous:</Text> {classificationResult.venomous}</Text>
+        <Text style={styles.resultText}><Text style={styles.label}>Probability:</Text> {classificationResult.probability}%</Text>
       </View>
     </View>
   );
@@ -31,22 +31,34 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    backgroundColor: '#ffffff',
   },
   image: {
     width: 200,
     height: 200,
     marginBottom: 20,
+    borderRadius: 10,
   },
-  resultContainer: {
-    padding: 10,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 5,
+  card: {
+    width: '100%',
+    padding: 20,
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5, // Adds shadow for Android
     alignItems: 'center',
   },
   resultText: {
     fontSize: 16,
     color: '#333',
-    marginBottom: 5,
+    marginBottom: 10,
+  },
+  label: {
+    fontWeight: 'bold',
+    color: '#555',
   },
 });
 
