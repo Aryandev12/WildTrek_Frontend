@@ -90,11 +90,10 @@ const AnimalAudioRecorder: React.FC = () => {
     }
 
     try {
-        // Prepare form data
      const formData = new FormData();
      formData.append('audio', {
        uri: fileUri,
-       type: 'audio/mp3', // Replace with the correct MIME type
+       type: 'audio/mp3', 
        name: 'audio',
      });
 
@@ -124,7 +123,6 @@ const AnimalAudioRecorder: React.FC = () => {
      console.log(resultData);
      setClassificationResult(resultData);
 
-        // Navigating to Result page with parameters
      navigation.navigate('Result', { fileUri, classificationResult: resultData });
      
 

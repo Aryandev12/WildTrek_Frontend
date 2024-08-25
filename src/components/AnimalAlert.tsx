@@ -1,19 +1,24 @@
 import React, { useState } from 'react';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import AudioRecorder from './BirdAudioRecorder';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
+import Slider from '@react-native-community/slider';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from './types'; // Adjust import based on your project structure
+import { RootStackParamList } from './types';
+import Location from './Location';
+import { useUser } from '../contexts/UserContext';
 
 // Navigation prop type
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'AnimalAlert'>;
 
 const AnimalAlert: React.FC = () => {
   const [imageUri, setImageUri] = useState<string | null>(null);
-  const [classificationResult, setClassificationResult] = useState<any>(null); // Adjust type as needed
-  const navigation = useNavigation<NavigationProp>(); // Use navigation
+  const [severity, setSeverity] = useState<number>(5);
+  const [classificationResult, setClassificationResult] = useState<any>(null);
+  const [address, setAddress] = useState<string | null>(null); 
+  const navigation = useNavigation<NavigationProp>();
+  const { user } = useUser();  
 
   async function sendImageToServer(imageUri: string): Promise<void> {
     const formData = new FormData();
@@ -24,13 +29,14 @@ const AnimalAlert: React.FC = () => {
     });
 
     try {
-      const response = await axios.post('http://10.0.2.2:5000/classify', formData, {
+      const response = await axios.post('http://10.0.2.2:5000/classify-animal-image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      if (response.data && response.data.result) {
-        const {  scientific_name,common_name,description,habitat, endangered, dangerous,venomous ,poisonous ,probability} = response.data;
+
+      if (response.data) {
+        const { scientific_name, common_name, description, habitat, endangered, dangerous, venomous, poisonous, probability } = response.data;
         const resultData = {
           scientific_name,
           common_name,
@@ -40,13 +46,9 @@ const AnimalAlert: React.FC = () => {
           dangerous,
           venomous,
           poisonous,
-          probability: probability.toFixed(2)
-          
-        }
+          probability: probability.toFixed(2),
+        };
         setClassificationResult(resultData);
-
-        // Navigating to Result page with parameters
-        navigation.navigate('Result', { imageUri, classificationResult: resultData });
       }
     } catch (error) {
       console.error('Error sending image to server: ', error);
@@ -61,8 +63,6 @@ const AnimalAlert: React.FC = () => {
         console.log('ImagePicker Error: ', response.errorCode);
       } else {
         let imageUri = response.assets?.[0]?.uri || response.uri;
-        console.log(imageUri);
-
         if (imageUri) {
           setImageUri(imageUri);
           sendImageToServer(imageUri);
@@ -79,15 +79,13 @@ const AnimalAlert: React.FC = () => {
       maxWidth: 2000,
       saveToPhotos: true,
     };
-    launchCamera(options, response => {
+    launchCamera(options, (response) => {
       if (response.didCancel) {
         console.log('User cancelled camera');
       } else if (response.errorCode) {
         console.log('Camera Error: ', response.errorCode);
       } else {
         let imageUri = response.uri || response.assets?.[0]?.uri;
-        console.log(imageUri);
-
         if (imageUri) {
           setImageUri(imageUri);
           sendImageToServer(imageUri);
@@ -96,9 +94,65 @@ const AnimalAlert: React.FC = () => {
     });
   }
 
+  function handleSubmit(): void {
+    if (!user) {
+      Alert.alert('User', 'Please login to submit.');
+      return;
+    }
+    if (!classificationResult) {
+      Alert.alert('Model', 'Please classify the bird image first.');
+      return;
+    }
+    if (!imageUri) {
+      Alert.alert('Image', 'Please upload an image.');
+      return;
+    }
+    if (!address) {
+      Alert.alert('Address', 'Please wait for location to be determined.');
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append('user_name', user.username);
+    formData.append('user_email', user.email);
+    formData.append('priority', classificationResult.endangered ? 'High' : 'Low');
+    formData.append('address', address);
+    formData.append('injury_level', severity.toString()); // Convert number to string
+    formData.append('animal_name', classificationResult.common_name);
+  
+    if (imageUri) {
+      const file = {
+        uri: imageUri,
+        type: 'image/jpeg', 
+        name: 'image.jpg', 
+      };
+      formData.append('image', file);
+    }
+  
+    console.log('Submit data:', formData);
+  
+    try {
+      axios.post('http://10.0.2.2:5000/sendalert', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then(response => {
+        console.log('Response:', response.data);
+        Alert.alert('Success', 'Data submitted successfully!');
+      })
+      .catch(error => {
+        console.error('Error submitting form:', error);
+        Alert.alert('Error', 'Failed to submit data.');
+      });
+    } catch (error) {
+      console.error('Error during submission:', error);
+      Alert.alert('Error', 'An unexpected error occurred.');
+    }
+  }
+
   return (
     <View style={styles.container}>
-
       {/* Image Card */}
       <View style={styles.card}>
         <Text style={styles.cardHeading}>Image</Text>
@@ -110,7 +164,32 @@ const AnimalAlert: React.FC = () => {
             <Text style={styles.buttonText}>Take Photo</Text>
           </TouchableOpacity>
         </View>
+        {imageUri && (
+          <Image source={{ uri: imageUri }} style={styles.image} />
+        )}
       </View>
+
+      {/* Slider for Severity */}
+      <View style={styles.sliderContainer}>
+        <Text style={styles.sliderLabel}>Set Severity of Animal Injury:</Text>
+        <Slider
+          style={styles.slider}
+          minimumValue={0}
+          maximumValue={10}
+          step={1}
+          value={severity}
+          onValueChange={(value) => setSeverity(value)}
+        />
+        <Text style={styles.sliderValue}>{severity}</Text>
+      </View>
+
+      {/* Location Component */}
+      <Location address={address} setAddress={setAddress} />
+
+      {/* Submit Button */}
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <Text style={styles.submitButtonText}>Submit</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -118,20 +197,14 @@ const AnimalAlert: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     padding: 20,
-  },
-  heading: {
-    fontSize: 30,
-    color: '#000000',
-    textAlign: 'center',
-    marginBottom: 20,
   },
   card: {
     backgroundColor: '#f8f8f8',
     padding: 15,
     borderRadius: 10,
     marginBottom: 20,
+    alignItems: 'center',
   },
   cardHeading: {
     fontSize: 24,
@@ -142,7 +215,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 15,
+    width: '100%',
   },
   button: {
     backgroundColor: '#007BFF',
@@ -158,27 +231,38 @@ const styles = StyleSheet.create({
   image: {
     width: 200,
     height: 200,
-    alignSelf: 'center',
     marginTop: 20,
     resizeMode: 'cover',
   },
-  resultContainer: {
+  sliderContainer: {
     marginTop: 20,
-    padding: 10,
     backgroundColor: '#f0f0f0',
     borderRadius: 5,
     alignItems: 'center',
+    padding: 15,
   },
-  resultText: {
-    fontSize: 16,
+  sliderLabel: {
+    fontSize: 18,
     color: '#333',
-    marginBottom: 5,
   },
-  audioContainer: {
-    marginTop: 10,
-    padding: 10,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 8,
+  slider: {
+    width: '100%',
+    height: 40,
+  },
+  sliderValue: {
+    fontSize: 18,
+    color: '#333',
+  },
+  submitButton: {
+    backgroundColor: '#28A745',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  submitButtonText: {
+    color: '#FFF',
+    fontSize: 18,
   },
 });
 

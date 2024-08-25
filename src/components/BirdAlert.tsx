@@ -112,7 +112,6 @@ const BirdAlert: React.FC = () => {
       return;
     }
   
-    // Create a FormData object
     const formData = new FormData();
     formData.append('user_name', user.username);
     formData.append('user_email', user.email);
@@ -121,19 +120,17 @@ const BirdAlert: React.FC = () => {
     formData.append('injury_level', severity.toString()); // Convert number to string
     formData.append('animal_name', classificationResult.common_name);
   
-    // Add image if available
     if (imageUri) {
       const file = {
         uri: imageUri,
-        type: 'image/jpeg', // Adjust based on the actual file type
-        name: 'image.jpg', // You might want to generate a unique name for the file
+        type: 'image/jpeg', 
+        name: 'image.jpg', 
       };
       formData.append('image', file);
     }
   
     console.log('Submit data:', formData);
   
-    // Post the FormData to the server
     try {
       axios.post('http://10.0.2.2:5000/sendalert', formData, {
         headers: {
@@ -142,12 +139,10 @@ const BirdAlert: React.FC = () => {
       })
       .then(response => {
         console.log('Response:', response.data);
-        // Handle success response here, e.g., navigate to another screen or show a success message
         Alert.alert('Success', 'Data submitted successfully!');
       })
       .catch(error => {
         console.error('Error submitting form:', error);
-        // Handle error response here, e.g., show an error message
         Alert.alert('Error', 'Failed to submit data.');
       });
     } catch (error) {
@@ -174,7 +169,6 @@ const BirdAlert: React.FC = () => {
         )}
       </View>
 
-      {/* Slider for Severity */}
       <View style={styles.sliderContainer}>
         <Text style={styles.sliderLabel}>Set Severity of Bird Injury:</Text>
         <Slider
@@ -188,10 +182,8 @@ const BirdAlert: React.FC = () => {
         <Text style={styles.sliderValue}>{severity}</Text>
       </View>
 
-      {/* Location Component */}
       <Location address={address} setAddress={setAddress} />
 
-      {/* Submit Button */}
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>

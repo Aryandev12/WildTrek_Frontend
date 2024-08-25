@@ -29,7 +29,7 @@ const Animal: React.FC = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      console.log("hi")
+   
       console.log(response);
       if (response.data) {
         const {  scientific_name,common_name,description,habitat, endangered, dangerous,venomous ,poisonous ,probability} = response.data;

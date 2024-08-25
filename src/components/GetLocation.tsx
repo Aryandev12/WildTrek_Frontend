@@ -90,11 +90,10 @@ const GetLocation: React.FC = () => {
         const data = await response.json();
         console.log(data);
 
-        // Set the vets state using the suggestedLocations array from the response
         if (Array.isArray(data.suggestedLocations)) {
           setVets(data.suggestedLocations);
         } else {
-          setVets([]); // If no results found, set an empty array
+          setVets([]); 
           console.error('No results found');
         }
       } catch (error) {

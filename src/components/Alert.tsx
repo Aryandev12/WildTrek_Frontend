@@ -3,14 +3,16 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../App';
+import { useUser } from '../contexts/UserContext'; 
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
 const Alert: React.FC = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
+  const { user } = useUser();
 
   const handleAlertHistoryPress = () => {
-    if (true) {
+    if (user) {
       navigation.navigate('AlertHistory'); // Navigate to Alert History if logged in
     } else {
       navigation.navigate('Profile'); // Redirect to Login if not logged in

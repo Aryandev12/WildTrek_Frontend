@@ -90,15 +90,13 @@ const AudioRecorder: React.FC = () => {
     }
 
     try {
-        // Prepare form data
      const formData = new FormData();
      formData.append('audio', {
        uri: fileUri,
-       type: 'audio/mp3', // Replace with the correct MIME type
+       type: 'audio/mp3', 
        name: 'audio',
      });
 
-     // Send the audio file to the server
      const response = await axios.post('http://10.0.2.2:5000/classify-bird-audio', formData, {
        headers: {
          'Content-Type': 'multipart/form-data',
