@@ -10,7 +10,12 @@ const Result = ({ route }) => {
       <View style={styles.resultContainer}>
         <Text style={styles.resultText}>Scientific Name: {classificationResult.scientific_name}</Text>
         <Text style={styles.resultText}>Common Name: {classificationResult.common_name}</Text>
+        <Text style={styles.resultText}>Description: {classificationResult.description}</Text>
+        <Text style={styles.resultText}>Habitat: {classificationResult.habitat}</Text>
         <Text style={styles.resultText}>Endangered: {classificationResult.endangered}</Text>
+        <Text style={styles.resultText}>Dangerous: {classificationResult.dangerous}</Text>
+        <Text style={styles.resultText}>Poisonous: {classificationResult.poisonous}</Text>
+        <Text style={styles.resultText}>Venomous: {classificationResult.venomous}</Text>
         <Text style={styles.resultText}>Probability: {classificationResult.probability}%</Text>
       </View>
     </View>
