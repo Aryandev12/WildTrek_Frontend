@@ -111,19 +111,49 @@ const BirdAlert: React.FC = () => {
       Alert.alert('Address', 'Please wait for location to be determined.');
       return;
     }
-
-    const data = {
-      username: user.username,
-      useremail: user.email,
-      endangered_priority: classificationResult.endangered ? 'High' : 'Low',
-      address: address, // Use the address from Location component
-      severity_level: severity,
-      common_name: classificationResult.common_name,
-      image_url: imageUri,
-    };
-
-    console.log('Submit data:', JSON.stringify(data));
-
+  
+    // Create a FormData object
+    const formData = new FormData();
+    formData.append('user_name', user.username);
+    formData.append('user_email', user.email);
+    formData.append('priority', classificationResult.endangered ? 'High' : 'Low');
+    formData.append('address', address);
+    formData.append('injury_level', severity.toString()); // Convert number to string
+    formData.append('animal_name', classificationResult.common_name);
+  
+    // Add image if available
+    if (imageUri) {
+      const file = {
+        uri: imageUri,
+        type: 'image/jpeg', // Adjust based on the actual file type
+        name: 'image.jpg', // You might want to generate a unique name for the file
+      };
+      formData.append('image', file);
+    }
+  
+    console.log('Submit data:', formData);
+  
+    // Post the FormData to the server
+    try {
+      axios.post('http://10.0.2.2:5000/sendalert', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then(response => {
+        console.log('Response:', response.data);
+        // Handle success response here, e.g., navigate to another screen or show a success message
+        Alert.alert('Success', 'Data submitted successfully!');
+      })
+      .catch(error => {
+        console.error('Error submitting form:', error);
+        // Handle error response here, e.g., show an error message
+        Alert.alert('Error', 'Failed to submit data.');
+      });
+    } catch (error) {
+      console.error('Error during submission:', error);
+      Alert.alert('Error', 'An unexpected error occurred.');
+    }
   }
 
   return (
