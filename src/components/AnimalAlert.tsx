@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import AudioRecorder from './AudioRecorder';
+import AudioRecorder from './BirdAudioRecorder';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';

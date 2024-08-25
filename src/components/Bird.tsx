@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import AudioRecorder from './AudioRecorder';
+import AudioRecorder from './BirdAudioRecorder';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -24,19 +24,28 @@ const Bird: React.FC = () => {
     });
 
     try {
-      const response = await axios.post('http://10.0.2.2:5000/classify', formData, {
+      const response = await axios.post('http://10.0.2.2:5000/classify-bird-image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      if (response.data && response.data.result) {
-        const { scientific_name, common_name, endangered, probability } = response.data.result;
+      console.log("hi")
+      console.log(response);
+      if (response.data) {
+        const {  scientific_name,common_name,description,habitat, endangered, dangerous,venomous ,poisonous ,probability} = response.data;
         const resultData = {
           scientific_name,
           common_name,
+          description,
+          habitat,
           endangered,
+          dangerous,
+          venomous,
+          poisonous,
           probability: probability.toFixed(2)
-        };
+          
+        }
+        console.log(resultData);
         setClassificationResult(resultData);
 
         // Navigating to Result page with parameters

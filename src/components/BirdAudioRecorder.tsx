@@ -15,14 +15,22 @@ import AudioRecorderPlayer, {
 } from 'react-native-audio-recorder-player';
 import RNFetchBlob from 'rn-fetch-blob';
 import DocumentPicker, { types } from 'react-native-document-picker';
+import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from './types';
+// Navigation prop type
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Bird'>;
 
-const AudioUploader: React.FC = () => {
+const AudioRecorder: React.FC = () => {
   const [recordSecs, setRecordSecs] = useState(0);
   const [recordTime, setRecordTime] = useState('00:00:00');
   const [currentPositionSec, setCurrentPositionSec] = useState(0);
   const [currentDurationSec, setCurrentDurationSec] = useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
   const [recordedFile, setRecordedFile] = useState(null);
+  const [classificationResult, setClassificationResult] = useState<any>(null); 
+  const navigation = useNavigation<NavigationProp>(); 
 
   const audioRecorderPlayer = useRef(new AudioRecorderPlayer()).current;
 
@@ -75,34 +83,52 @@ const AudioUploader: React.FC = () => {
     }
   };
 
-  const onUploadAudio = async (fileUri) => {
+  const onUploadAudio = async (fileUri: null) => {
     if (!fileUri) {
       console.log('No file selected or recorded');
       return;
     }
 
     try {
-      const formData = new FormData();
-      formData.append('file', {
-        uri: fileUri,
-        type: 'audio/mp3',
-        name: 'audio.mp3',
-      });
+        // Prepare form data
+     const formData = new FormData();
+     formData.append('audio', {
+       uri: fileUri,
+       type: 'audio/mp3', // Replace with the correct MIME type
+       name: 'audio',
+     });
 
-      const response = await fetch('YOUR_SERVER_ENDPOINT', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+     // Send the audio file to the server
+     const response = await axios.post('http://10.0.2.2:5000/classify-animal-audio', formData, {
+       headers: {
+         'Content-Type': 'multipart/form-data',
+       },
+     });
+     console.log(response)
 
-      if (response.ok) {
-        const responseData = await response.json();
-        console.log('Upload successful:', responseData);
-      } else {
-        console.log('Upload failed:', response.statusText);
-      }
+     console.log('File uploaded successfully:', response.data);
+
+     const {  scientific_name,common_name,description,habitat, endangered, dangerous,venomous ,poisonous ,probability} = response.data;
+     const resultData = {
+       scientific_name,
+       common_name,
+       description,
+       habitat,
+       endangered,
+       dangerous,
+       venomous,
+       poisonous,
+       probability: probability.toFixed(2)
+       
+     }
+     console.log(resultData);
+     setClassificationResult(resultData);
+
+        // Navigating to Result page with parameters
+     navigation.navigate('Result', { fileUri, classificationResult: resultData });
+     
+
+      
     } catch (error) {
       console.error('Upload error:', error);
     }
@@ -198,4 +224,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AudioUploader;
+export default AudioRecorder;

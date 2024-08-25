@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "185697081502",
+    "project_id": "wildlife-terk",
+    "storage_bucket": "wildlife-terk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:185697081502:android:bf51e5c3b52a901802838f",
+        "android_client_info": {
+          "package_name": "com.wildtrek_frontend"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "185697081502-kmrnftkr5r2a2k3jkm033colffukcslv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBW8N1vEa8gVtV7f_43EMoZE2kjJTCyKIY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "185697081502-kmrnftkr5r2a2k3jkm033colffukcslv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
