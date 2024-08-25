@@ -20,9 +20,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
 // Navigation prop type
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Bird'>;
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Animal'>;
 
-const AudioRecorder: React.FC = () => {
+const AnimalAudioRecorder: React.FC = () => {
   const [recordSecs, setRecordSecs] = useState(0);
   const [recordTime, setRecordTime] = useState('00:00:00');
   const [currentPositionSec, setCurrentPositionSec] = useState(0);
@@ -99,7 +99,7 @@ const AudioRecorder: React.FC = () => {
      });
 
      // Send the audio file to the server
-     const response = await axios.post('http://10.0.2.2:5000/classify-bird-audio', formData, {
+     const response = await axios.post('http://10.0.2.2:5000/classify-animal-audio', formData, {
        headers: {
          'Content-Type': 'multipart/form-data',
        },
@@ -224,4 +224,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AudioRecorder;
+export default AnimalAudioRecorder;

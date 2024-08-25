@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import AudioRecorder from './BirdAudioRecorder';
+import AnimalAudioRecorder from './AnimalAudioRecorder';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -119,7 +119,7 @@ const Animal: React.FC = () => {
       <View style={styles.card}>
         <Text style={styles.cardHeading}>Audio</Text>
         <View style={styles.audioContainer}>
-          <AudioRecorder />
+         <AnimalAudioRecorder />
         </View>
       </View>
 
