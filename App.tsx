@@ -13,6 +13,7 @@ import AnimalAlert from './src/components/AnimalAlert';
 import Result from './src/components/Result';
 import Animal from './src/components/Animal';
 import Profile from './src/components/Profile';
+import VetScreen from './src/components/VetScreen';
 import { UserProvider, useUser } from './src/contexts/UserContext'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -48,6 +49,7 @@ const MainStack = () => {
       <Stack.Screen name="Result" component={Result} />
       <Stack.Screen name="Animal" component={Animal} />
       <Stack.Screen name="Alert" component={Alert} />
+      <Stack.Screen name="VetScreen" component={VetScreen} />
       <Stack.Screen name="AlertHistory" component={AlertHistory} />
       <Stack.Screen name="BirdAlert" component={BirdAlert} />
       <Stack.Screen name="AnimalAlert" component={AnimalAlert} />
@@ -109,6 +111,20 @@ const MainApp: React.FC = () => {
           component={AlertScreen}
           options={{
             tabBarLabel: 'Alert',
+            headerStyle: {
+              backgroundColor: '#3f89b8',
+            },
+            headerTintColor: '#000000',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        />
+        <Tab.Screen
+          name="VetScreen"
+          component={VetScreen}
+          options={{
+            tabBarLabel: 'Vet',
             headerStyle: {
               backgroundColor: '#3f89b8',
             },

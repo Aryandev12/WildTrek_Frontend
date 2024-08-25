@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
+import GetLocation from './GetLocation';
 
 // Your component code here...
 
@@ -26,10 +27,10 @@ const BirdAlert: React.FC = () => {
       type: 'image/jpeg',
       name: 'photo.jpg',
     });
-    formData.append('severity', severity.toString());
+  
 
     try {
-      const response = await axios.post('http://10.0.2.2:5000/classify', formData, {
+      const response = await axios.post('http://10.0.2.2:5000/classify-bird-image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -132,6 +133,8 @@ const BirdAlert: React.FC = () => {
         />
         <Text style={styles.sliderValue}>{severity}</Text>
       </View>
+
+      <GetLocation />
 
       {/* Submit Button */}
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>

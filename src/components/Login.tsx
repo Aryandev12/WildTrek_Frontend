@@ -23,7 +23,7 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
           email: response.data.email,
           accesstoken: response.data.accesstoken
         }
-        t
+        
 
         await AsyncStorage.setItem('userData', JSON.stringify(userData));
 

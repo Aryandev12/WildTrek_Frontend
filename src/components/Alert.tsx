@@ -39,6 +39,11 @@ const Alert: React.FC = () => {
         <Text style={styles.historyButtonText}>View Alert History</Text>
       </TouchableOpacity>
 
+      <TouchableOpacity style={styles.historyButton} onPress={handleAlertHistoryPress}>
+        <Text style={styles.historyButtonText}>Get NearBy Vet</Text>
+      </TouchableOpacity>
+
+
       </View>
     </View>
   );
