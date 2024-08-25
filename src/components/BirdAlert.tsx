@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import Slider from '@react-native-community/slider';  // Updated import
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
+import Slider from '@react-native-community/slider';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
-import GetLocation from './GetLocation';
-
-// Your component code here...
-
+import Location from './Location';
+import { useUser } from '../contexts/UserContext';
 
 // Navigation prop type
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'BirdAlert'>;
@@ -18,7 +16,9 @@ const BirdAlert: React.FC = () => {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [severity, setSeverity] = useState<number>(5); // Default value of slider is set to 5
   const [classificationResult, setClassificationResult] = useState<any>(null);
+  const [address, setAddress] = useState<string | null>(null); // State for address
   const navigation = useNavigation<NavigationProp>();
+  const { user } = useUser();  // Access user data
 
   async function sendImageToServer(imageUri: string): Promise<void> {
     const formData = new FormData();
@@ -27,7 +27,6 @@ const BirdAlert: React.FC = () => {
       type: 'image/jpeg',
       name: 'photo.jpg',
     });
-  
 
     try {
       const response = await axios.post('http://10.0.2.2:5000/classify-bird-image', formData, {
@@ -35,18 +34,21 @@ const BirdAlert: React.FC = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      if (response.data && response.data.result) {
-        const { scientific_name, common_name, endangered, probability } = response.data.result;
+
+      if (response.data) {
+        const { scientific_name, common_name, description, habitat, endangered, dangerous, venomous, poisonous, probability } = response.data;
         const resultData = {
           scientific_name,
           common_name,
+          description,
+          habitat,
           endangered,
+          dangerous,
+          venomous,
+          poisonous,
           probability: probability.toFixed(2),
         };
         setClassificationResult(resultData);
-
-        // Navigating to Result page with parameters
-        navigation.navigate('Result', { imageUri, classificationResult: resultData });
       }
     } catch (error) {
       console.error('Error sending image to server: ', error);
@@ -61,10 +63,9 @@ const BirdAlert: React.FC = () => {
         console.log('ImagePicker Error: ', response.errorCode);
       } else {
         let imageUri = response.assets?.[0]?.uri || response.uri;
-        console.log(imageUri);
-
         if (imageUri) {
           setImageUri(imageUri);
+          sendImageToServer(imageUri);
         }
       }
     });
@@ -85,21 +86,44 @@ const BirdAlert: React.FC = () => {
         console.log('Camera Error: ', response.errorCode);
       } else {
         let imageUri = response.uri || response.assets?.[0]?.uri;
-        console.log(imageUri);
-
         if (imageUri) {
           setImageUri(imageUri);
+          sendImageToServer(imageUri);
         }
       }
     });
   }
 
   function handleSubmit(): void {
-    if (imageUri) {
-      sendImageToServer(imageUri);
-    } else {
-      console.log('No image selected');
+    if (!user) {
+      Alert.alert('User', 'Please login to submit.');
+      return;
     }
+    if (!classificationResult) {
+      Alert.alert('Model', 'Please classify the bird image first.');
+      return;
+    }
+    if (!imageUri) {
+      Alert.alert('Image', 'Please upload an image.');
+      return;
+    }
+    if (!address) {
+      Alert.alert('Address', 'Please wait for location to be determined.');
+      return;
+    }
+
+    const data = {
+      username: user.username,
+      useremail: user.email,
+      endangered_priority: classificationResult.endangered ? 'High' : 'Low',
+      address: address, // Use the address from Location component
+      severity_level: severity,
+      common_name: classificationResult.common_name,
+      image_url: imageUri,
+    };
+
+    console.log('Submit data:', JSON.stringify(data));
+
   }
 
   return (
@@ -134,7 +158,8 @@ const BirdAlert: React.FC = () => {
         <Text style={styles.sliderValue}>{severity}</Text>
       </View>
 
-      <GetLocation />
+      {/* Location Component */}
+      <Location address={address} setAddress={setAddress} />
 
       {/* Submit Button */}
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
@@ -147,7 +172,6 @@ const BirdAlert: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     padding: 20,
   },
   card: {
@@ -187,15 +211,14 @@ const styles = StyleSheet.create({
   },
   sliderContainer: {
     marginTop: 20,
-    padding: 10,
     backgroundColor: '#f0f0f0',
     borderRadius: 5,
     alignItems: 'center',
+    padding: 15,
   },
   sliderLabel: {
     fontSize: 18,
     color: '#333',
-    marginBottom: 10,
   },
   slider: {
     width: '100%',
@@ -204,7 +227,6 @@ const styles = StyleSheet.create({
   sliderValue: {
     fontSize: 18,
     color: '#333',
-    marginTop: 10,
   },
   submitButton: {
     backgroundColor: '#28A745',

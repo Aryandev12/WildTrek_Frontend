@@ -30,13 +30,19 @@ const AnimalAlert: React.FC = () => {
         },
       });
       if (response.data && response.data.result) {
-        const { scientific_name, common_name, endangered, probability } = response.data.result;
+        const {  scientific_name,common_name,description,habitat, endangered, dangerous,venomous ,poisonous ,probability} = response.data;
         const resultData = {
           scientific_name,
           common_name,
+          description,
+          habitat,
           endangered,
+          dangerous,
+          venomous,
+          poisonous,
           probability: probability.toFixed(2)
-        };
+          
+        }
         setClassificationResult(resultData);
 
         // Navigating to Result page with parameters
