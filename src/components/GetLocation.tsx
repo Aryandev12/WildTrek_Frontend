@@ -112,8 +112,9 @@ const GetLocation: React.FC = () => {
       <Text style={styles.heading}>Latitude: {location.latitude}</Text>
       <Text style={styles.heading}>Longitude: {location.longitude}</Text>
       <Text style={styles.heading}>Address: {address}</Text>
-      <Button title="Get Location" onPress={getCurrentLocation}></Button>
-      <Button title="Get NearBy Vet" onPress={getNearByVet}></Button>
+      <Button title="Get Location" onPress={getCurrentLocation} />
+      <View style={styles.spacing} /> 
+      <Button title="Get NearBy Vet" onPress={getNearByVet} />
 
       <ScrollView contentContainerStyle={styles.scrollView}>
         {vets.length > 0 ? (
@@ -179,6 +180,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 16,
     color: '#888',
+  },
+  spacing: {
+    height: 10, 
   },
 });
 

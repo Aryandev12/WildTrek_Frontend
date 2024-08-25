@@ -43,19 +43,21 @@ const Location: React.FC<LocationProps> = ({ address, setAddress }) => {
     }
   };
 
-  const fetchReverseGeocode = async (latitude: number, longitude: number) => {
-    try {
-      const response = await fetch(
-        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`,
-      );
-      const data = await response.json();
-      
-      const fullAddress = `${data.localityInfo.administrative[1].name}, ${data.localityInfo.administrative[2].name}, ${data.localityInfo.administrative[3].name}, ${data.postcode}, ${data.countryName}`;
-      setAddress(fullAddress);
-    } catch (error) {
-      console.error('Error during reverse geocoding:', error);
-      setAddress(null);
-    }
+  const fetchReverseGeocode = (latitude: number, longitude: number) => {
+    const url = `https://apis.mapmyindia.com/advancedmaps/v1/${licenceKey}/rev_geocode?lat=${latitude}&lng=${longitude}`;
+    fetch(url)
+      .then((response) => {
+        console.log(response);
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        const address = data.results[0].formatted_address;
+        setAddress(address);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   useEffect(() => {
