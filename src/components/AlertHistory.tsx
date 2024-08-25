@@ -1,50 +1,67 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Alert, Button, Image } from 'react-native';
+import axios from 'axios'; // Make sure to import axios
+import { useUser } from '../contexts/UserContext'; // Adjust the import path as needed
 
-type Alert = {
-  id: number;
-  type: string;
-  date: string;
-  details: string;
-};
+
 
 const AlertHistory: React.FC = () => {
   const [alerts, setAlerts] = useState<Alert[]>([]);
+  const { user } = useUser(); 
 
-  // Simulating fetching data from a database
-  useEffect(() => {
-    const fetchAlerts = async () => {
-      const fetchedAlerts = [
-        { id: 1, type: 'Bird', date: '2024-08-21', details: 'Spotted a rare bird species' },
-        { id: 2, type: 'Animal', date: '2024-08-20', details: 'Encountered a wild animal' },
-        { id: 3, type: 'Bird', date: '2024-08-19', details: 'Birds chirping recorded' },
-      ];
+  const fetchAlerts = async () => {
+    console.log(user)
+    if (!user || !user.accesstoken) {
+      Alert.alert('Error', 'User not authenticated');
+      return;
+    }
 
-      setAlerts(fetchedAlerts);
-    };
+    try {
+      const response = await axios.get('http://10.0.2.2:5000/api/alerts', {
+        headers: {
+          Authorization: `Bearer ${user.accesstoken}`, // Include the token in the header
+        },
+      });
+      console.log(response);
 
-    fetchAlerts();
-  }, []);
+      setAlerts(response.data.alerts); // Adjusted to match the response structure
+      console.log('Alerts fetched:', response.data.alerts);
+    } catch (error) {
+      console.error('Error fetching alerts:', error);
+      Alert.alert('Error', 'Failed to fetch alerts');
+    }
+  };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {alerts.length === 0 ? (
-        <Text style={styles.noAlertsText}>No alerts found.</Text>
-      ) : (
-        alerts.map((alert) => (
-          <View key={alert.id} style={styles.card}>
-            <Text style={styles.alertType}>{alert.type} Alert</Text>
-            <Text style={styles.alertDate}>{alert.date}</Text>
-            <Text style={styles.alertDetails}>{alert.details}</Text>
-          </View>
-        ))
-      )}
-    </ScrollView>
+    <View style={styles.container}>
+      <Button title="Fetch Alerts" onPress={fetchAlerts} />
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        {alerts.length === 0 ? (
+          <Text style={styles.noAlertsText}>No alerts found.</Text>
+        ) : (
+          alerts.map((alert) => (
+            <View key={alert._id} style={styles.card}>
+              <Image source={{ uri: alert.photo_url }} style={styles.alertImage} />
+              <Text style={styles.alertAnimal}>{alert.animal_name}</Text>
+              <Text style={styles.alertPriority}>{alert.priority} Priority</Text>
+              <Text style={styles.alertInjury}>Injury Level: {alert.injury_level}</Text>
+              <Text style={styles.alertAddress}>{alert.address}</Text>
+              <Text style={styles.alertUser}>Reported by: {alert.username} ({alert.user_email})</Text>
+            </View>
+          ))
+        )}
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: '#fff',
+  },
+  scrollView: {
     padding: 16,
   },
   noAlertsText: {
@@ -60,21 +77,40 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     elevation: 3,
   },
-  alertType: {
+  alertAnimal: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#2c3e50',
     marginBottom: 4,
   },
-  alertDate: {
+  alertPriority: {
+    fontSize: 14,
+    color: '#e74c3c',
+    marginBottom: 8,
+  },
+  alertInjury: {
+    fontSize: 16,
+    color: '#e67e22',
+    marginBottom: 8,
+  },
+  alertAddress: {
     fontSize: 14,
     color: '#7f8c8d',
     marginBottom: 8,
   },
-  alertDetails: {
-    fontSize: 16,
+  alertUser: {
+    fontSize: 14,
     color: '#34495e',
+    marginBottom: 8,
+  },
+  alertImage: {
+    width: '100%',
+    height: 150,
+    borderRadius: 8,
+    marginBottom: 8,
   },
 });
 
 export default AlertHistory;
+
+
