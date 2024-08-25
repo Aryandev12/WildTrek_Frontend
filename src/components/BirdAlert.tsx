@@ -1,19 +1,23 @@
 import React, { useState } from 'react';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import AudioRecorder from './AudioRecorder';
+import Slider from '@react-native-community/slider';  // Updated import
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from './types'; 
+import { RootStackParamList } from './types';
+
+// Your component code here...
+
 
 // Navigation prop type
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'BirdAlert'>;
 
 const BirdAlert: React.FC = () => {
   const [imageUri, setImageUri] = useState<string | null>(null);
-  const [classificationResult, setClassificationResult] = useState<any>(null); 
-  const navigation = useNavigation<NavigationProp>(); 
+  const [severity, setSeverity] = useState<number>(5); // Default value of slider is set to 5
+  const [classificationResult, setClassificationResult] = useState<any>(null);
+  const navigation = useNavigation<NavigationProp>();
 
   async function sendImageToServer(imageUri: string): Promise<void> {
     const formData = new FormData();
@@ -22,6 +26,7 @@ const BirdAlert: React.FC = () => {
       type: 'image/jpeg',
       name: 'photo.jpg',
     });
+    formData.append('severity', severity.toString());
 
     try {
       const response = await axios.post('http://10.0.2.2:5000/classify', formData, {
@@ -35,7 +40,7 @@ const BirdAlert: React.FC = () => {
           scientific_name,
           common_name,
           endangered,
-          probability: probability.toFixed(2)
+          probability: probability.toFixed(2),
         };
         setClassificationResult(resultData);
 
@@ -59,7 +64,6 @@ const BirdAlert: React.FC = () => {
 
         if (imageUri) {
           setImageUri(imageUri);
-          sendImageToServer(imageUri);
         }
       }
     });
@@ -73,7 +77,7 @@ const BirdAlert: React.FC = () => {
       maxWidth: 2000,
       saveToPhotos: true,
     };
-    launchCamera(options, response => {
+    launchCamera(options, (response) => {
       if (response.didCancel) {
         console.log('User cancelled camera');
       } else if (response.errorCode) {
@@ -84,15 +88,21 @@ const BirdAlert: React.FC = () => {
 
         if (imageUri) {
           setImageUri(imageUri);
-          sendImageToServer(imageUri);
         }
       }
     });
   }
 
+  function handleSubmit(): void {
+    if (imageUri) {
+      sendImageToServer(imageUri);
+    } else {
+      console.log('No image selected');
+    }
+  }
+
   return (
     <View style={styles.container}>
-
       {/* Image Card */}
       <View style={styles.card}>
         <Text style={styles.cardHeading}>Image</Text>
@@ -104,7 +114,29 @@ const BirdAlert: React.FC = () => {
             <Text style={styles.buttonText}>Take Photo</Text>
           </TouchableOpacity>
         </View>
+        {imageUri && (
+          <Image source={{ uri: imageUri }} style={styles.image} />
+        )}
       </View>
+
+      {/* Slider for Severity */}
+      <View style={styles.sliderContainer}>
+        <Text style={styles.sliderLabel}>Set Severity of Bird Injury:</Text>
+        <Slider
+          style={styles.slider}
+          minimumValue={0}
+          maximumValue={10}
+          step={1}
+          value={severity}
+          onValueChange={(value) => setSeverity(value)}
+        />
+        <Text style={styles.sliderValue}>{severity}</Text>
+      </View>
+
+      {/* Submit Button */}
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <Text style={styles.submitButtonText}>Submit</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -115,17 +147,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
-  heading: {
-    fontSize: 30,
-    color: '#000000',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
   card: {
     backgroundColor: '#f8f8f8',
     padding: 15,
     borderRadius: 10,
     marginBottom: 20,
+    alignItems: 'center',
   },
   cardHeading: {
     fontSize: 24,
@@ -136,7 +163,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 15,
+    width: '100%',
   },
   button: {
     backgroundColor: '#007BFF',
@@ -152,27 +179,40 @@ const styles = StyleSheet.create({
   image: {
     width: 200,
     height: 200,
-    alignSelf: 'center',
     marginTop: 20,
     resizeMode: 'cover',
   },
-  resultContainer: {
+  sliderContainer: {
     marginTop: 20,
     padding: 10,
     backgroundColor: '#f0f0f0',
     borderRadius: 5,
     alignItems: 'center',
   },
-  resultText: {
-    fontSize: 16,
+  sliderLabel: {
+    fontSize: 18,
     color: '#333',
-    marginBottom: 5,
+    marginBottom: 10,
   },
-  audioContainer: {
+  slider: {
+    width: '100%',
+    height: 40,
+  },
+  sliderValue: {
+    fontSize: 18,
+    color: '#333',
     marginTop: 10,
-    padding: 10,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 8,
+  },
+  submitButton: {
+    backgroundColor: '#28A745',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  submitButtonText: {
+    color: '#FFF',
+    fontSize: 18,
   },
 });
 
