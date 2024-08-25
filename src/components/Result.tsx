@@ -4,9 +4,12 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 const Result = ({ route }) => {
   const { imageUri, classificationResult } = route.params;
 
+  // Use the provided imageUri or fallback to a default image if imageUri is not available
+  const displayImageUri = imageUri || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdZOQh13Cl80G8RSx7fslkZyWSEIN-ICnxUt7V0VDTjMUfxjvy46UkzoXvSVvXaWtpYx8&usqp=CAU';
+
   return (
     <View style={styles.container}>
-      <Image source={{ uri: imageUri }} style={styles.image} />
+      <Image source={{ uri: displayImageUri }} style={styles.image} />
       <View style={styles.resultContainer}>
         <Text style={styles.resultText}>Scientific Name: {classificationResult.scientific_name}</Text>
         <Text style={styles.resultText}>Common Name: {classificationResult.common_name}</Text>
