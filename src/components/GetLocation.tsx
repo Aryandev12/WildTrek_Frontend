@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, PermissionsAndroid, Button, ScrollView, TouchableOpacity } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
-import { GEOCODING_API ,TOKEN_VET} from '@env';
+import { GEOCODING_API, TOKEN_VET } from '@env';
 
 const GetLocation: React.FC = () => {
   const [location, setLocation] = useState({ latitude: null, longitude: null });
@@ -82,6 +82,7 @@ const GetLocation: React.FC = () => {
             }
           }
         );
+        console.log(response)
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -93,7 +94,7 @@ const GetLocation: React.FC = () => {
         if (Array.isArray(data.suggestedLocations)) {
           setVets(data.suggestedLocations);
         } else {
-          setVets([]); 
+          setVets([]);
           console.error('No results found');
         }
       } catch (error) {
@@ -112,7 +113,7 @@ const GetLocation: React.FC = () => {
       <Text style={styles.heading}>Longitude: {location.longitude}</Text>
       <Text style={styles.heading}>Address: {address}</Text>
       <Button title="Get Location" onPress={getCurrentLocation} />
-      <View style={styles.spacing} /> 
+      <View style={styles.spacing} />
       <Button title="Get NearBy Vet" onPress={getNearByVet} />
 
       <ScrollView contentContainerStyle={styles.scrollView}>
@@ -120,9 +121,16 @@ const GetLocation: React.FC = () => {
           vets.map((vet, index) => (
             <TouchableOpacity key={index} style={styles.card}>
               <Text style={styles.cardTitle}>{vet.placeName}</Text>
-              <Text style={styles.cardAddress}>{vet.placeAddress}</Text>
-              <Text style={styles.cardDistance}>{vet.distance} meters away</Text>
+              <Text style={styles.cardAddress}>
+                <Text style={styles.labelText}>Address: </Text>
+                {vet.placeAddress}
+              </Text>
+              <Text style={styles.cardDistance}>
+                <Text style={styles.labelText}>Distance: </Text>
+                {vet.distance} meters away
+              </Text>
             </TouchableOpacity>
+
           ))
         ) : (
           <Text style={styles.noResultsText}>No veterinary services found nearby.</Text>
@@ -147,7 +155,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#192f6a',
     borderRadius: 8,
     padding: 16,
     marginVertical: 8,
@@ -156,23 +164,28 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
-    elevation: 3, // Adds shadow for Android
+    elevation: 3,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#1e90ff',
   },
   cardAddress: {
     fontSize: 14,
-    color: '#666',
+    color: '#2e8b57',
     marginTop: 4,
   },
   cardDistance: {
     fontSize: 14,
-    color: '#444',
+    color: '#ff4500',
     marginTop: 8,
     fontStyle: 'italic',
+  },
+  labelText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#ff6347', // Tomato color for labels
   },
   noResultsText: {
     textAlign: 'center',
@@ -181,7 +194,7 @@ const styles = StyleSheet.create({
     color: '#888',
   },
   spacing: {
-    height: 10, 
+    height: 10,
   },
 });
 

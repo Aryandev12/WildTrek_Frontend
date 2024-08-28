@@ -1,32 +1,34 @@
 import React from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from '../../App';
+import LinearGradient from 'react-native-linear-gradient';
+import { HomeStackParamList } from '../stack/HomeStack';
 
-type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
+type HomeScreenNavigationProp = StackNavigationProp<HomeStackParamList, 'Home'>;
 
 const Home: React.FC = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={['#4c669f', '#3b5998', '#192f6a']} style={styles.container}>
+      <StatusBar barStyle="light-content" />
       {/* Heading for the app */}
       <Text style={styles.heading}>WildTrek</Text>
 
       {/* Cards for Bird, Animal, Plant */}
       <View style={styles.cardsContainer}>
         <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Bird')}>
-          <Image source={{ uri: 'https://t3.ftcdn.net/jpg/07/44/00/82/240_F_744008275_AHvOgcDuOj3JxyFYBDZNe2MHbG8qvJpV.jpg' }} style={styles.image} />
+          <Image source={{ uri: 'https://images.pexels.com/photos/12290533/pexels-photo-12290533.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' }} style={styles.image} />
           <Text style={styles.text}>BIRD</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Animal')}>
-          <Image source={{ uri: 'https://t3.ftcdn.net/jpg/03/02/14/00/240_F_302140095_ZNvUZwG6IofM1vt5VPC758sCFsT2BVYb.jpg' }} style={styles.image} />
+          <Image source={{ uri: 'https://images.pexels.com/photos/68669/wolf-predator-wildlife-montana-68669.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' }} style={styles.image} />
           <Text style={styles.text}>ANIMAL</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -35,34 +37,35 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#add8e6',
     paddingTop: 50,
   },
   heading: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: 'bold',
-    color: '#2c3e50',
+    color: '#ffffff',
     textAlign: 'center',
-    textShadowColor: '#dcdcdc',
+    textShadowColor: '#000000',
     textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 2,
+    textShadowRadius: 5,
+    marginBottom: 40,
   },
   cardsContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     width: '100%',
+    paddingHorizontal: 20,
   },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f0e8d5',
-    padding: 15,
-    marginVertical: 10,
-    width: '80%',
-    height: 120,
-    borderRadius: 10,
-    elevation: 5,
+    backgroundColor: '#ffffff',
+    padding: 20,
+    marginVertical: 15,
+    borderRadius: 15,
+    elevation: 10,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    overflow: 'hidden',
   },
   image: {
     width: 80,
@@ -71,9 +74,9 @@ const styles = StyleSheet.create({
     borderRadius: 40,
   },
   text: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2c3e50',
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#333333',
   },
 });
 

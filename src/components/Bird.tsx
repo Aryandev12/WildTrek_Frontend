@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, StatusBar } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import AudioRecorder from './BirdAudioRecorder';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from './types'; // Adjust import based on your project structure
+import { HomeStackParamList } from '../stack/HomeStack'; 
+import GalleryIcon from '../../assets/galleryIcon.svg';
+import CameraIcon from '../../assets/cameraIcon.svg';
 
 // Navigation prop type
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Bird'>;
+type NavigationProp = NativeStackNavigationProp<HomeStackParamList, 'Bird'>;
 
 const Bird: React.FC = () => {
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -29,10 +32,9 @@ const Bird: React.FC = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      console.log("hi")
       console.log(response);
       if (response.data) {
-        const {  scientific_name,common_name,description,habitat, endangered, dangerous,venomous ,poisonous ,probability} = response.data;
+        const { scientific_name, common_name, description, habitat, endangered, dangerous, venomous, poisonous, probability } = response.data;
         const resultData = {
           scientific_name,
           common_name,
@@ -43,7 +45,6 @@ const Bird: React.FC = () => {
           venomous,
           poisonous,
           probability: probability.toFixed(2)
-          
         }
         console.log(resultData);
         setClassificationResult(resultData);
@@ -100,91 +101,95 @@ const Bird: React.FC = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={['#4c669f', '#3b5998', '#192f6a']} style={styles.container}>
+      <StatusBar barStyle="light-content" />
+      <View style={styles.headerContainer}>
+        <Text style={styles.heading}>Bird Classification</Text>
+      </View>
+      <View style={styles.contentContainer}>
+        {/* Image Card */}
+        <View style={styles.card}>
+          <Text style={styles.cardHeading}>Image</Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.iconButton} onPress={pickImageFromGallery}>
+              <GalleryIcon />
+              <Text style={styles.iconLabel}>Gallery</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton} onPress={takePhoto}>
+              <CameraIcon />
+              <Text style={styles.iconLabel}>Camera</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-      {/* Image Card */}
-      <View style={styles.card}>
-        <Text style={styles.cardHeading}>Image</Text>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={pickImageFromGallery}>
-            <Text style={styles.buttonText}>Gallery</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={takePhoto}>
-            <Text style={styles.buttonText}>Take Photo</Text>
-          </TouchableOpacity>
+        {/* Audio Card */}
+        <View style={styles.card}>
+          <Text style={styles.cardHeading}>Audio</Text>
+          <View style={styles.audioContainer}>
+            <AudioRecorder />
+          </View>
         </View>
       </View>
-
-      {/* Audio Card */}
-      <View style={styles.card}>
-        <Text style={styles.cardHeading}>Audio</Text>
-        <View style={styles.audioContainer}>
-          <AudioRecorder />
-        </View>
-      </View>
-
-    </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     padding: 20,
   },
-  heading: {
-    fontSize: 30,
-    color: '#000000',
-    textAlign: 'center',
+  headerContainer: {
+    alignItems: 'center',
     marginBottom: 20,
   },
+  heading: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    textAlign: 'center',
+    textShadowColor: '#000000',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 5,
+  },
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
   card: {
-    backgroundColor: '#f8f8f8',
+    backgroundColor: '#ffffff',
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 15,
     marginBottom: 20,
+    elevation: 5,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
   },
   cardHeading: {
     fontSize: 24,
-    color: '#333',
-    marginBottom: 10,
+    fontWeight: 'bold',
+    color: '#333333',
+    marginBottom: 15,
     textAlign: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 15,
   },
-  button: {
-    backgroundColor: '#007BFF',
-    padding: 10,
-    borderRadius: 5,
-    width: '40%',
+  icon: {
+    width: 40, // Adjust icon size as needed
+    height: 40,
+    tintColor: '#ffffff', // Optionally add color tint
+  },
+  iconButton: {
+    flex: 1,
     alignItems: 'center',
   },
-  buttonText: {
-    color: '#FFF',
-    fontSize: 16,
-  },
-  image: {
-    width: 200,
-    height: 200,
-    alignSelf: 'center',
-    marginTop: 20,
-    resizeMode: 'cover',
-  },
-  resultContainer: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 5,
-    alignItems: 'center',
-  },
-  resultText: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 5,
+  iconLabel: {
+    fontSize: 15,
+    color: '#333333',
   },
   audioContainer: {
     marginTop: 10,

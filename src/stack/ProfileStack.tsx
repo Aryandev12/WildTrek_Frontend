@@ -17,11 +17,14 @@ const ProfileStack = () => {
     <Stack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#3f89b8', 
+          backgroundColor: '#192f6a',
         },
-        headerTintColor: '#000000',
+        headerTintColor: '#fff',
         headerTitleStyle: {
           fontWeight: 'bold',
+        },
+        cardStyle: {
+          backgroundColor: '#f0f8ff',
         },
       }}
     >

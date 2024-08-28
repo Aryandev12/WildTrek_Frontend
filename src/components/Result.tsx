@@ -9,6 +9,9 @@ const Result = ({ route }) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.heading}>Result</Text>
+      </View>      
       <Image source={{ uri: displayImageUri }} style={styles.image} />
       <View style={styles.card}>
         <Text style={styles.resultText}><Text style={styles.label}>Scientific Name:</Text> {classificationResult.scientific_name}</Text>
@@ -31,34 +34,55 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#192f6a', // Consistent background color
+  },
+  headerContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  heading: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    textAlign: 'center',
+    textShadowColor: '#000000',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 5,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#f0e8d5', // Title color consistent with label color
+    marginBottom: 20,
   },
   image: {
     width: 200,
     height: 200,
     marginBottom: 20,
     borderRadius: 10,
+    borderColor: '#4c669f', // Border color to match card color
+    borderWidth: 2,
   },
   card: {
     width: '100%',
     padding: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#4c669f', // Card background color consistent with the previous design
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5, // Adds shadow for Android
-    alignItems: 'center',
+    alignItems: 'flex-start', // Align items to the start of the card
   },
   resultText: {
     fontSize: 16,
-    color: '#333',
+    color: '#ffffff', // Text color consistent with card background
     marginBottom: 10,
   },
   label: {
     fontWeight: 'bold',
-    color: '#555',
+    color: '#f0e8d5', // Label color to contrast with the resultText
   },
 });
 

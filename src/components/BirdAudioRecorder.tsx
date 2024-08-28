@@ -19,6 +19,12 @@ import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
+import RecordIcon from '../../assets/recordIcon.svg';
+import StopIcon from '../../assets/stopIcon.svg';
+import UploadIcon from '../../assets/uploadIcon.svg';
+import SelectIcon from '../../assets/selectIcon.svg';
+import { ScrollView } from 'react-native-gesture-handler';
+
 // Navigation prop type
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Bird'>;
 
@@ -29,8 +35,8 @@ const AudioRecorder: React.FC = () => {
   const [currentDurationSec, setCurrentDurationSec] = useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
   const [recordedFile, setRecordedFile] = useState(null);
-  const [classificationResult, setClassificationResult] = useState<any>(null); 
-  const navigation = useNavigation<NavigationProp>(); 
+  const [classificationResult, setClassificationResult] = useState<any>(null);
+  const navigation = useNavigation<NavigationProp>();
 
   const audioRecorderPlayer = useRef(new AudioRecorderPlayer()).current;
 
@@ -90,43 +96,43 @@ const AudioRecorder: React.FC = () => {
     }
 
     try {
-     const formData = new FormData();
-     formData.append('audio', {
-       uri: fileUri,
-       type: 'audio/mp3', 
-       name: 'audio',
-     });
+      const formData = new FormData();
+      formData.append('audio', {
+        uri: fileUri,
+        type: 'audio/mp3',
+        name: 'audio',
+      });
 
-     const response = await axios.post('http://10.0.2.2:5000/classify-bird-audio', formData, {
-       headers: {
-         'Content-Type': 'multipart/form-data',
-       },
-     });
-     console.log(response)
+      const response = await axios.post('http://10.0.2.2:5000/classify-bird-audio', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log(response)
 
-     console.log('File uploaded successfully:', response.data);
+      console.log('File uploaded successfully:', response.data);
 
-     const {  scientific_name,common_name,description,habitat, endangered, dangerous,venomous ,poisonous ,probability} = response.data;
-     const resultData = {
-       scientific_name,
-       common_name,
-       description,
-       habitat,
-       endangered,
-       dangerous,
-       venomous,
-       poisonous,
-       probability: probability.toFixed(2)
-       
-     }
-     console.log(resultData);
-     setClassificationResult(resultData);
+      const { scientific_name, common_name, description, habitat, endangered, dangerous, venomous, poisonous, probability } = response.data;
+      const resultData = {
+        scientific_name,
+        common_name,
+        description,
+        habitat,
+        endangered,
+        dangerous,
+        venomous,
+        poisonous,
+        probability: probability.toFixed(2)
 
-        // Navigating to Result page with parameters
-     navigation.navigate('Result', { fileUri, classificationResult: resultData });
-     
+      }
+      console.log(resultData);
+      setClassificationResult(resultData);
 
-      
+      // Navigating to Result page with parameters
+      navigation.navigate('Result', { fileUri, classificationResult: resultData });
+
+
+
     } catch (error) {
       console.error('Upload error:', error);
     }
@@ -138,50 +144,56 @@ const AudioRecorder: React.FC = () => {
   }
 
   return (
-    <SafeAreaView>
-      <Text style={styles.text}>Recording time: {recordTime}</Text>
+    <ScrollView>
+      <SafeAreaView>
+        <Text style={styles.text}>Recording time: {recordTime}</Text>
 
-      <View>
+        <View>
+          <View style={styles.container}>
+            <TouchableOpacity style={styles.iconButton} onPress={onStartRecord}>
+              <RecordIcon />
+              <Text style={styles.iconLabel}>Record</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.iconButton} onPress={onStopRecord}>
+              <StopIcon />
+              <Text style={styles.iconLabel}>Stop</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.singleButtonContainer}>
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={() => onUploadAudio(recordedFile)}
+            >
+              <UploadIcon />
+              <Text style={styles.iconLabel}>Upload</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Divider Line */}
+        <View style={styles.divider} />
+
         <View style={styles.container}>
-          <TouchableOpacity style={styles.button} onPress={onStartRecord}>
-            <Text style={styles.buttonText}>Record</Text>
+          <TouchableOpacity style={styles.iconButton} onPress={onSelectAudio}>
+            <SelectIcon />
+            <Text style={styles.iconLabel}>Select Audio</Text>
           </TouchableOpacity>
-
-          <TouchableOpacity style={styles.button} onPress={onStopRecord}>
-            <Text style={styles.buttonText}>Stop</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.singleButtonContainer}>
           <TouchableOpacity
-            style={styles.button}
-            onPress={() => onUploadAudio(recordedFile)}
+            style={styles.iconButton}
+            onPress={() => onUploadAudio(selectedFile?.uri)}
           >
-            <Text style={styles.buttonText}>Upload</Text>
+            <UploadIcon />
+            <Text style={styles.iconLabel}>Upload</Text>
           </TouchableOpacity>
         </View>
-      </View>
 
-      {/* Divider Line */}
-      <View style={styles.divider} />
-
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.button} onPress={onSelectAudio}>
-          <Text style={styles.buttonText}>Select Audio</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => onUploadAudio(selectedFile?.uri)}
-        >
-          <Text style={styles.buttonText}>Upload</Text>
-        </TouchableOpacity>
-      </View>
-
-      {selectedFile && (
-        <Text style={styles.text}>Selected file: {selectedFile.name}</Text>
-      )}
-    </SafeAreaView>
+        {selectedFile && (
+          <Text style={styles.text}>Selected file: {selectedFile.name}</Text>
+        )}
+      </SafeAreaView>
+    </ScrollView>
 
   );
 };
@@ -191,34 +203,48 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 10,
-    marginVertical: 10, 
+    marginVertical: 10,
+    alignItems: 'center',
   },
   singleButtonContainer: {
-    marginTop: 10, 
-    alignItems: 'center', 
+    flexDirection: 'row',
+    marginTop: 10,
+    alignItems: 'center',
   },
   button: {
     backgroundColor: '#007BFF',
-    padding: 12, 
-    borderRadius: 8, 
+    padding: 12,
+    borderRadius: 8,
     width: '45%',
     alignItems: 'center',
   },
   buttonText: {
     color: '#FFF',
     fontSize: 16,
-    fontWeight: 'bold', 
+    fontWeight: 'bold',
   },
   text: {
     color: '#000',
-    marginTop: 20, 
+    marginTop: 20,
     textAlign: 'center',
-    fontSize: 16, 
+    fontSize: 16,
   },
   divider: {
     height: 1,
-    backgroundColor: '#DDD',  
-    marginVertical: 20,  
+    backgroundColor: '#DDD',
+    marginVertical: 20,
+  },
+  iconButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+  },
+  iconLabel: {
+    fontSize: 14, // Slightly smaller font size for better alignment
+    color: '#333333',
+    marginTop: 5, // Adds space between icon and label
+    textAlign: 'center', // Centers the label below the icon
   },
 });
 

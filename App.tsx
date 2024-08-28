@@ -1,62 +1,16 @@
 import React, { useEffect } from 'react';
+import { Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from './src/components/Home';
-import AlertScreen from './src/components/Alert';
-import ProfileStack from './src/stack/ProfileStack'; 
-import { createStackNavigator } from '@react-navigation/stack';
-import Bird from './src/components/Bird';
-import Alert from './src/components/Alert';
-import AlertHistory from './src/components/AlertHistory';
-import BirdAlert from './src/components/BirdAlert';
-import AnimalAlert from './src/components/AnimalAlert';
-import Result from './src/components/Result';
-import Animal from './src/components/Animal';
-import Profile from './src/components/Profile';
-import VetScreen from './src/components/VetScreen';
-import { UserProvider, useUser } from './src/contexts/UserContext'; 
+import HomeStack from './src/stack/HomeStack';
+import AlertStack from './src/stack/AlertStack';
+import ProfileStack from './src/stack/ProfileStack';
+import VetStack from './src/stack/VetStack';
+import { UserProvider, useUser } from './src/contexts/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import LinearGradient from 'react-native-linear-gradient';
 
 const Tab = createBottomTabNavigator();
-export type RootStackParamList = {
-  Home: undefined;
-  Bird: undefined;
-  Animal: undefined;
-  Result: undefined;
-  Alert: undefined;
-  AlertHistory: undefined;
-  BirdAlert: undefined
-};
-
-const Stack = createStackNavigator<RootStackParamList>();
-
-const MainStack = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: '#3f89b8',
-        },
-        headerTintColor: '#000000',
-        headerTitleStyle: {
-          fontWeight: 'bold',
-        },
-      }}
-    >
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Bird" component={Bird} />
-      <Stack.Screen name="Result" component={Result} />
-      <Stack.Screen name="Animal" component={Animal} />
-      <Stack.Screen name="Alert" component={Alert} />
-      <Stack.Screen name="VetScreen" component={VetScreen} />
-      <Stack.Screen name="AlertHistory" component={AlertHistory} />
-      <Stack.Screen name="BirdAlert" component={BirdAlert} />
-      <Stack.Screen name="AnimalAlert" component={AnimalAlert} />
-      <Stack.Screen name="Profile" component={Profile} />
-    </Stack.Navigator>
-  );
-};
 
 const App: React.FC = () => {
   return (
@@ -91,44 +45,85 @@ const MainApp: React.FC = () => {
           tabBarStyle: {
             position: 'absolute',
             bottom: 0,
-            backgroundColor: '#3f89b8',
+            backgroundColor: '#192f6a',
+            borderTopWidth: 0,
+            elevation: 2,
+            height: 50, 
+            shadowColor: '#000',
+            shadowOpacity: 0.3,
+            shadowOffset: { width: 0, height: 3 },
+            shadowRadius: 8,
           },
           tabBarActiveTintColor: '#fff',
-          tabBarInactiveTintColor: '#000000',
-          tabBarIcon: () => null, 
+          tabBarInactiveTintColor: '#3f89b8',
+          tabBarIcon: () => null, // Hide icons
           tabBarLabelStyle: {
             fontWeight: 'bold',
-            fontSize: 18,
-            textAlignVertical: 'center',
-            height: '100%',
-            paddingBottom: 0,
+            fontSize: 14, 
+            textAlign: 'center',
           },
         }}
       >
-        <Tab.Screen name="MainStack" component={MainStack} options={{ headerShown: false, tabBarLabel: 'Home' }} />
+        <Tab.Screen 
+          name="HomeStack" 
+          component={HomeStack} 
+          options={{ 
+            headerShown: false, 
+            tabBarLabel: ({ focused }) => (
+              <View style={{ alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                <LinearGradient
+                  colors={focused ? ['#00c6ff', '#0072ff'] : ['#3f89b8', '#192f6a']}
+                  style={{ padding: 5, borderRadius: 10, width: 80 }} // Set fixed width
+                  start={{ x: 0, y: 0 }} // Left to right gradient
+                  end={{ x: 1, y: 0 }}
+                >
+                  <Text style={{ color: '#fff', textAlign: 'center' }}>Home</Text>
+                </LinearGradient>
+              </View>
+            ),
+          }} 
+        />
         <Tab.Screen
-          name="Alert"
-          component={AlertScreen}
+          name="AlertStack"
+          component={AlertStack}
           options={{
-            tabBarLabel: 'Alert',
-            headerStyle: {
-              backgroundColor: '#3f89b8',
-            },
-            headerTintColor: '#000000',
-            headerTitleStyle: {
-              fontWeight: 'bold',
-            },
+            headerShown: false,
+            tabBarLabel: ({ focused }) => (
+              <View style={{ alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                <LinearGradient
+                  colors={focused ? ['#00c6ff', '#0072ff'] : ['#3f89b8', '#192f6a']}
+                  style={{ padding: 5, borderRadius: 10, width: 80 }} // Set fixed width
+                  start={{ x: 0, y: 0 }} // Left to right gradient
+                  end={{ x: 1, y: 0 }}
+                >
+                  <Text style={{ color: '#fff', textAlign: 'center' }}>Alert</Text>
+                </LinearGradient>
+              </View>
+            ),
+
           }}
         />
         <Tab.Screen
-          name="VetScreen"
-          component={VetScreen}
+          name="VetStack"
+          component={VetStack}
           options={{
-            tabBarLabel: 'Vet',
+            headerShown: false,
+            tabBarLabel: ({ focused }) => (
+              <View style={{ alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                <LinearGradient
+                  colors={focused ? ['#00c6ff', '#0072ff'] : ['#3f89b8', '#192f6a']}
+                  style={{ padding: 5, borderRadius: 10, width: 80 }} // Set fixed width
+                  start={{ x: 0, y: 0 }} // Left to right gradient
+                  end={{ x: 1, y: 0 }}
+                >
+                  <Text style={{ color: '#fff', textAlign: 'center' }}>Vet</Text>
+                </LinearGradient>
+              </View>
+            ),
             headerStyle: {
               backgroundColor: '#3f89b8',
             },
-            headerTintColor: '#000000',
+            headerTintColor: '#fff',
             headerTitleStyle: {
               fontWeight: 'bold',
             },
@@ -138,8 +133,19 @@ const MainApp: React.FC = () => {
           name="ProfileStack"
           component={ProfileStack} 
           options={{
-            tabBarLabel: 'Profile',
             headerShown: false,
+            tabBarLabel: ({ focused }) => (
+              <View style={{ alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                <LinearGradient
+                  colors={focused ? ['#00c6ff', '#0072ff'] : ['#3f89b8', '#192f6a']}
+                  style={{ padding: 5, borderRadius: 10, width: 80 }} // Set fixed width
+                  start={{ x: 0, y: 0 }} // Left to right gradient
+                  end={{ x: 1, y: 0 }}
+                >
+                  <Text style={{ color: '#fff', textAlign: 'center' }}>Profile</Text>
+                </LinearGradient>
+              </View>
+            ),
           }}
         />
       </Tab.Navigator>

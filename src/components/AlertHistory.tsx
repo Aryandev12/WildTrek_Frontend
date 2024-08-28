@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert, Button, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity, Image } from 'react-native';
 import axios from 'axios'; // Make sure to import axios
 import { useUser } from '../contexts/UserContext'; // Adjust the import path as needed
 
-
-
 const AlertHistory: React.FC = () => {
   const [alerts, setAlerts] = useState<Alert[]>([]);
-  const { user } = useUser(); 
+  const { user } = useUser();
 
   const fetchAlerts = async () => {
-    console.log(user)
     if (!user || !user.accesstoken) {
       Alert.alert('Error', 'User not authenticated');
       return;
@@ -22,10 +19,7 @@ const AlertHistory: React.FC = () => {
           Authorization: `Bearer ${user.accesstoken}`, // Include the token in the header
         },
       });
-      console.log(response);
-
       setAlerts(response.data.alerts); // Adjusted to match the response structure
-      console.log('Alerts fetched:', response.data.alerts);
     } catch (error) {
       console.error('Error fetching alerts:', error);
       Alert.alert('Error', 'Failed to fetch alerts');
@@ -34,7 +28,9 @@ const AlertHistory: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Button title="Fetch Alerts" onPress={fetchAlerts} />
+      <TouchableOpacity style={styles.button} onPress={fetchAlerts}>
+        <Text style={styles.buttonText}>Fetch Alerts</Text>
+      </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.scrollView}>
         {alerts.length === 0 ? (
           <Text style={styles.noAlertsText}>No alerts found.</Text>
@@ -59,7 +55,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#192f6a', // Background color for consistency
   },
   scrollView: {
     padding: 16,
@@ -68,10 +64,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
     fontSize: 18,
-    color: '#666',
+    color: '#ffffff', // Consistent text color
   },
   card: {
-    backgroundColor: '#f0e8d5',
+    backgroundColor: '#4c669f', // Card color consistent with the gradient
     padding: 16,
     marginBottom: 16,
     borderRadius: 8,
@@ -80,27 +76,27 @@ const styles = StyleSheet.create({
   alertAnimal: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2c3e50',
+    color: '#ffffff', // Text color consistent with card background
     marginBottom: 4,
   },
   alertPriority: {
     fontSize: 14,
-    color: '#e74c3c',
+    color: '#f39c12', // Highlight color for priority
     marginBottom: 8,
   },
   alertInjury: {
     fontSize: 16,
-    color: '#e67e22',
+    color: '#e67e22', // Consistent with previous color scheme
     marginBottom: 8,
   },
   alertAddress: {
     fontSize: 14,
-    color: '#7f8c8d',
+    color: '#bdc3c7', // Light color for address
     marginBottom: 8,
   },
   alertUser: {
     fontSize: 14,
-    color: '#34495e',
+    color: '#ecf0f1', // Consistent text color
     marginBottom: 8,
   },
   alertImage: {
@@ -109,8 +105,24 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 8,
   },
+  button: {
+    backgroundColor: '#ffffff', // Button background color
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    borderRadius: 25,
+    alignItems: 'center',
+    elevation: 10,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    marginBottom: 20,
+  },
+  buttonText: {
+    fontSize: 18,
+    color: '#192f6a', // Button text color
+    fontWeight: '600',
+  },
 });
 
 export default AlertHistory;
-
-

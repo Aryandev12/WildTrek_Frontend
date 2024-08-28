@@ -19,14 +19,17 @@ import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
+import RecordIcon from '../../assets/recordIcon.svg';
+import StopIcon from '../../assets/stopIcon.svg';
+import UploadIcon from '../../assets/uploadIcon.svg';
+import SelectIcon from '../../assets/selectIcon.svg';
+
 // Navigation prop type
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Animal'>;
 
 const AnimalAudioRecorder: React.FC = () => {
   const [recordSecs, setRecordSecs] = useState(0);
   const [recordTime, setRecordTime] = useState('00:00:00');
-  const [currentPositionSec, setCurrentPositionSec] = useState(0);
-  const [currentDurationSec, setCurrentDurationSec] = useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
   const [recordedFile, setRecordedFile] = useState(null);
   const [classificationResult, setClassificationResult] = useState<any>(null); 
@@ -90,49 +93,43 @@ const AnimalAudioRecorder: React.FC = () => {
     }
 
     try {
-     const formData = new FormData();
-     formData.append('audio', {
-       uri: fileUri,
-       type: 'audio/mp3', 
-       name: 'audio',
-     });
+      const formData = new FormData();
+      formData.append('audio', {
+        uri: fileUri,
+        type: 'audio/mp3', 
+        name: 'audio',
+      });
 
-     // Send the audio file to the server
-     const response = await axios.post('http://10.0.2.2:5000/classify-animal-audio', formData, {
-       headers: {
-         'Content-Type': 'multipart/form-data',
-       },
-     });
-     console.log(response)
+      const response = await axios.post('http://10.0.2.2:5000/classify-animal-audio', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log(response);
 
-     console.log('File uploaded successfully:', response.data);
+      const { scientific_name, common_name, description, habitat, endangered, dangerous, venomous, poisonous, probability } = response.data;
+      const resultData = {
+        scientific_name,
+        common_name,
+        description,
+        habitat,
+        endangered,
+        dangerous,
+        venomous,
+        poisonous,
+        probability: probability.toFixed(2),
+      };
+      console.log(resultData);
+      setClassificationResult(resultData);
 
-     const {  scientific_name,common_name,description,habitat, endangered, dangerous,venomous ,poisonous ,probability} = response.data;
-     const resultData = {
-       scientific_name,
-       common_name,
-       description,
-       habitat,
-       endangered,
-       dangerous,
-       venomous,
-       poisonous,
-       probability: probability.toFixed(2)
-       
-     }
-     console.log(resultData);
-     setClassificationResult(resultData);
+      navigation.navigate('Result', { fileUri, classificationResult: resultData });
 
-     navigation.navigate('Result', { fileUri, classificationResult: resultData });
-     
-
-      
     } catch (error) {
       console.error('Upload error:', error);
     }
   };
 
-  let playWidth = (currentPositionSec / currentDurationSec) * (300 - 56);
+  let playWidth = (recordSecs / 300) * (300 - 56);
   if (!playWidth) {
     playWidth = 0;
   }
@@ -143,21 +140,24 @@ const AnimalAudioRecorder: React.FC = () => {
 
       <View>
         <View style={styles.container}>
-          <TouchableOpacity style={styles.button} onPress={onStartRecord}>
-            <Text style={styles.buttonText}>Record</Text>
+          <TouchableOpacity style={styles.iconButton} onPress={onStartRecord}>
+            <RecordIcon />
+            <Text style={styles.iconLabel}>Record</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.button} onPress={onStopRecord}>
-            <Text style={styles.buttonText}>Stop</Text>
+          <TouchableOpacity style={styles.iconButton} onPress={onStopRecord}>
+            <StopIcon />
+            <Text style={styles.iconLabel}>Stop</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.singleButtonContainer}>
           <TouchableOpacity
-            style={styles.button}
+            style={styles.iconButton}
             onPress={() => onUploadAudio(recordedFile)}
           >
-            <Text style={styles.buttonText}>Upload</Text>
+            <UploadIcon />
+            <Text style={styles.iconLabel}>Upload</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -166,15 +166,16 @@ const AnimalAudioRecorder: React.FC = () => {
       <View style={styles.divider} />
 
       <View style={styles.container}>
-        <TouchableOpacity style={styles.button} onPress={onSelectAudio}>
-          <Text style={styles.buttonText}>Select Audio</Text>
+        <TouchableOpacity style={styles.iconButton} onPress={onSelectAudio}>
+          <SelectIcon />
+          <Text style={styles.iconLabel}>Select Audio</Text>
         </TouchableOpacity>
-
         <TouchableOpacity
-          style={styles.button}
+          style={styles.iconButton}
           onPress={() => onUploadAudio(selectedFile?.uri)}
         >
-          <Text style={styles.buttonText}>Upload</Text>
+          <UploadIcon />
+          <Text style={styles.iconLabel}>Upload</Text>
         </TouchableOpacity>
       </View>
 
@@ -182,7 +183,6 @@ const AnimalAudioRecorder: React.FC = () => {
         <Text style={styles.text}>Selected file: {selectedFile.name}</Text>
       )}
     </SafeAreaView>
-
   );
 };
 
@@ -191,34 +191,36 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 10,
-    marginVertical: 10, 
-  },
-  singleButtonContainer: {
-    marginTop: 10, 
-    alignItems: 'center', 
-  },
-  button: {
-    backgroundColor: '#007BFF',
-    padding: 12, 
-    borderRadius: 8, 
-    width: '45%',
+    marginVertical: 10,
     alignItems: 'center',
   },
-  buttonText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: 'bold', 
+  singleButtonContainer: {
+    flexDirection: 'row',
+    marginTop: 10,
+    alignItems: 'center',
   },
   text: {
     color: '#000',
-    marginTop: 20, 
+    marginTop: 20,
     textAlign: 'center',
-    fontSize: 16, 
+    fontSize: 16,
   },
   divider: {
     height: 1,
-    backgroundColor: '#DDD',  
-    marginVertical: 20,  
+    backgroundColor: '#DDD',
+    marginVertical: 20,
+  },
+  iconButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+  },
+  iconLabel: {
+    fontSize: 14, // Slightly smaller font size for better alignment
+    color: '#333333',
+    marginTop: 5, // Adds space between icon and label
+    textAlign: 'center', // Centers the label below the icon
   },
 });
 
