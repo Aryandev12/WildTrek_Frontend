@@ -1,13 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, PermissionsAndroid, Button, ScrollView, TouchableOpacity } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
-import { GEOCODING_API, TOKEN_VET } from '@env';
+import { GEOCODING_API, CLIENT_ID,CLIENT_KEY } from '@env';
 
 const GetLocation: React.FC = () => {
   const [location, setLocation] = useState({ latitude: null, longitude: null });
   const [address, setAddress] = useState<string | null>(null);
   const licenceKey = GEOCODING_API;
   const [vets, setVets] = useState<any[]>([]); // Allowing any type for array elements for now
+  const [accesstoken,setAccessToken] = useState();
+
+
+  useEffect(() => {
+    const fetchAccessToken = async () => {
+      try {
+        const clientId = CLIENT_ID;
+        const clientSecret = CLIENT_KEY;
+        const url = 'https://outpost.mappls.com/api/security/oauth/token';
+
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'accept': 'application/json',
+          },
+          body: `grant_type=client_credentials&client_id=${clientId}&client_secret=${clientSecret}`,
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Access Token:', data.access_token);
+          setAccessToken(data.access_token)
+          // Store or use the access token for other requests
+        } else {
+          console.error('Failed to obtain access token:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error during fetch:', error);
+      }
+    };
+
+    fetchAccessToken();
+  }, []);
 
   const requestLocationPermission = async () => {
     try {
@@ -78,7 +112,7 @@ const GetLocation: React.FC = () => {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${TOKEN_VET}`,
+              'Authorization': `Bearer ${accesstoken}`,
             }
           }
         );
@@ -185,7 +219,7 @@ const styles = StyleSheet.create({
   labelText: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#ff6347', // Tomato color for labels
+    color: '#ff6347', 
   },
   noResultsText: {
     textAlign: 'center',
